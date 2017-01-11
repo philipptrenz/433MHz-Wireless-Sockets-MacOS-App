@@ -36,79 +36,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let menuItem = NSMenuItem()
         menuItem.title = "No devices configured"
         menuItem.isEnabled = false
-        self.menu.addItem(menuItem)
+        menu.addItem(menuItem)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
-    
-    /*
-    func menuWillOpen(_ menu: NSMenu) {
-        getList {
-            devices in
-            // if device changed (state, name, new devices added, ...)
-            var reinitiate = false
-            
-            // if devices added or deleted
-            if (devices.count != self.deviceList.count) {
-                reinitiate = true
-            } else {
-                
-                // update titles
-                for i in 0 ..< devices.count {
-                    let devOld = self.deviceList[i]
-                    let devNew = devices[i] as! Device
-                    // if device id is different
-                    if (devOld.device != devNew.device) {
-                        reinitiate = true
-                        break
-                    } else {
-                        // get menuItem with value of device
-                        let items = self.menu.items
-                        // find correct item
-                        for i in 0 ..< items.count {
-                            let item = items[i]
-                            // set title new
-                            if item.title.contains(devOld.name) {
-                                item.title = "Turn " + devNew.name + (devNew.on ? " off" : " on")
-                                self.menuItemDeviceMapper[item.hash] = devNew
-                            }
-                        }
-                    }
-                }
-                self.deviceList = devices as! [AppDelegate.Device]
-            }
-            
-            // reinitialize all menu items
-            if (reinitiate) {
-                // reinitiate menu items
-                self.deviceList = devices as! [AppDelegate.Device]
-                self.menu.removeAllItems()
-                self.menuItemDeviceMapper.removeAll()
-                
-                if (devices.count == 0) {
-                    let menuItem = NSMenuItem()
-                    menuItem.title = "No device configured"
-                    menuItem.isEnabled = false
-                    self.menu.addItem(menuItem)
-                } else {
-                    for rcswitch in devices {
-                        let rcswitch = rcswitch as! Device
-                        let menuItem = NSMenuItem()
-                        menuItem.title = "Turn " + rcswitch.name + (rcswitch.on ? " off" : " on")
-                        menuItem.target = self
-                        menuItem.action = #selector(self.switchit(sender:))
-                        menuItem.isEnabled = true
-                        //menuItem.keyEquivalent = "t"
-                        self.menu.addItem(menuItem)
-                        self.menuItemDeviceMapper[menuItem.hash] = rcswitch
-                    }
-                }
-                
-            }
-        }
-    }*/
+
     
     // Gets called when menu is about to open
     // If returns an integer,
@@ -119,7 +53,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self.deviceList = devices as! [AppDelegate.Device]
             waiting = false
         }
-        while(waiting){wait()}
+        while(waiting){ wait() }
         return deviceList.count
     }
     
@@ -133,83 +67,79 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         
         return true
     }
-   
     
-    
-    
-    /*
-    func switchit(sender: NSMenuItem) {
-        if rcswitch.on {
-            switchOff(device: sender.)
-        } else {
-            switchOn(device: device)
-        }
-        
-    }*/
-    
+    func addHintItem(hint: String) {
+        let menuItem = NSMenuItem()
+        menuItem.title = hint
+        menuItem.isEnabled = false
+        menu.addItem(menuItem)
 
-    
-    
+    }
+
     /* -------------------------------------------------------------------- */
     
     
     func switchOn(sender: NSMenuItem) {
-        let device = sender.identifier
-        let session = URLSession.shared
-        // url-escape the query string we're passed
-        let url = NSURL(string: "\(BASE_URL)/\(device)/on")
-        let task = session.dataTask(with: url! as URL) { data, response, err in
-            // first check for a hard error
-            if let error = err {
-                NSLog("433 py api error: \(error)")
-            }
-            
-            // then check the response code
-            if let httpResponse = response as? HTTPURLResponse {
-                switch httpResponse.statusCode {
-                case 200: // all good!
-                    let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
-                    NSLog("\(device) \(dataString)")
-                case 401: // unauthorized
-                    NSLog("433 py api returned an 'unauthorized' response.")
-                case 550: // unauthorized
-                    NSLog("433 py api returned an 'unauthorized' response.")
-                default:
-                    NSLog("weather api returned response: %d %@", httpResponse.statusCode, HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))
+        if let device = sender.identifier {
+            let session = URLSession.shared
+            // url-escape the query string we're passed
+            let url = NSURL(string: "\(BASE_URL)/\(device)/on")
+            let task = session.dataTask(with: url! as URL) { data, response, err in
+                // first check for a hard error
+                if let error = err {
+                    NSLog("433 py api error: \(error)")
+                }
+                
+                // then check the response code
+                if let httpResponse = response as? HTTPURLResponse {
+                    switch httpResponse.statusCode {
+                    case 200: // all good!
+                        let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+                        NSLog("\(device) \(dataString)")
+                    case 401: // unauthorized
+                        NSLog("433 py api returned an 'unauthorized' response.")
+                    case 550: // unauthorized
+                        NSLog("433 py api returned an 'unauthorized' response.")
+                    default:
+                        NSLog("433 py api response: %d %@", httpResponse.statusCode, HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))
+                    }
                 }
             }
+            task.resume()
         }
-        task.resume()
     }
     
     func switchOff(sender: NSMenuItem) {
-        let device = sender.identifier
-        let session = URLSession.shared
-        // url-escape the query string we're passed
-        let url = NSURL(string: "\(BASE_URL)/\(device)/off")
-        let task = session.dataTask(with: url! as URL) { data, response, err in
-            // first check for a hard error
-            if let error = err {
-                NSLog("433 py api error: \(error)")
-            }
-            
-            // then check the response code
-            if let httpResponse = response as? HTTPURLResponse {
-                switch httpResponse.statusCode {
-                case 200: // all good!
-                    let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
-                    NSLog("\(device) \(dataString)")
-                case 401: // unauthorized
-                    NSLog("433 py api returned an 'unauthorized' response.")
-                case 550: // unauthorized
-                    NSLog("433 py api returned an 'unauthorized' response.")
-                default:
-                    NSLog("weather api returned response: %d %@", httpResponse.statusCode, HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))
+        if let device = sender.identifier {
+            let session = URLSession.shared
+            // url-escape the query string we're passed
+            let url = NSURL(string: "\(BASE_URL)/\(device)/off")
+            let task = session.dataTask(with: url! as URL) { data, response, err in
+                // first check for a hard error
+                if let error = err {
+                    NSLog("433 py api error: \(error)")
+                }
+                
+                // then check the response code
+                if let httpResponse = response as? HTTPURLResponse {
+                    switch httpResponse.statusCode {
+                    case 200: // all good!
+                        let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+                        NSLog("\(device) \(dataString)")
+                    case 401: // unauthorized
+                        NSLog("433 py api returned an 'unauthorized' response.")
+                    case 550: // unauthorized
+                        NSLog("433 py api returned an 'unauthorized' response.")
+                    default:
+                        NSLog("433 py api response: %d %@", httpResponse.statusCode, HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))
+                    }
                 }
             }
+            task.resume()
         }
-        task.resume()
     }
+    
+    /* -------------------------------------------------------------------- */
     
     func getList(completionHandler: @escaping (_ devices: NSArray) -> ()) {
         
@@ -226,14 +156,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, err in
-            // first check for a hard error
-            if let error = err {
-                NSLog("433 py api error: \(error)")
-            }
-            
-            // then check the response code
-            if let httpResponse = response as? HTTPURLResponse {
+        let urlconfig = URLSessionConfiguration.default
+        urlconfig.timeoutIntervalForRequest = 1         // timeout 1 s
+        urlconfig.timeoutIntervalForResource = 3
+        let session = URLSession(configuration: urlconfig)
+        let task = session.dataTask(with: request) { data, response, err in
+
+            if let error = err as? NSError, error.domain == NSURLErrorDomain {
+                completionHandler(NSArray())    // return empty
+            } else if let httpResponse = response as? HTTPURLResponse {
+                
                 switch httpResponse.statusCode {
                     
                 case 200: // all good!
@@ -262,14 +194,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     }
                     completionHandler(deviceList as NSArray)
                     
-                    
-                case 401: // unauthorized
-                    NSLog("433 py api returned an 'unauthorized' response.")
-                case 550: // unauthorized
-                    NSLog("433 py api returned an 'unauthorized' response.")
-                case 1004: // could not connect to the server
-                    NSLog("No connection to the server.")
                 default:
+                    completionHandler(NSArray())    // return empty
                     NSLog("433 py api response: %d %@", httpResponse.statusCode, HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))
                 }
             }
