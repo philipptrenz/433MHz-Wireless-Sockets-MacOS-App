@@ -14,10 +14,10 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="RC_Switch_App" customModuleProvider="target">
             <connections>
-                <outlet property="menu" destination="AYu-sK-qS6" id="XZP-ec-67G"/>
+                <outlet property="menu" destination="h9D-so-KVr" id="1cr-Jd-Qb4"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
-        <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6"/>
+        <menu id="h9D-so-KVr"/>
     </objects>
 </document>

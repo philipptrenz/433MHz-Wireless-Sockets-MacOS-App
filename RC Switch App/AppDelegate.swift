@@ -43,6 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Insert code here to tear down your application
     }
     
+    /*
     func menuWillOpen(_ menu: NSMenu) {
         getList {
             devices in
@@ -71,11 +72,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                             // set title new
                             if item.title.contains(devOld.name) {
                                 item.title = "Turn " + devNew.name + (devNew.on ? " off" : " on")
+                                self.menuItemDeviceMapper[item.hash] = devNew
                             }
                         }
                     }
                 }
-                
                 self.deviceList = devices as! [AppDelegate.Device]
             }
             
@@ -107,21 +108,44 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 
             }
         }
+    }*/
+    
+    // Gets called when menu is about to open
+    // If returns an integer,
+    func numberOfItems(in menu: NSMenu) -> Int {
+        var waiting = true
+        getList {
+            devices in
+            self.deviceList = devices as! [AppDelegate.Device]
+            waiting = false
+        }
+        while(waiting){wait()}
+        return deviceList.count
     }
     
-    func switchit(sender: AnyObject) {
-        let sender = sender as! NSMenuItem
-        NSLog("selector works!")
+    func menu(_ menu: NSMenu, update item: NSMenuItem, at index: Int, shouldCancel: Bool) -> Bool {
+        let rcswitch = deviceList[index]
+        item.title = "Turn " + rcswitch.name + (rcswitch.on ? " off" : " on")
+        item.target = self
+        item.action = rcswitch.on ? #selector(switchOff(sender:)) : #selector(switchOn(sender:))
         
-        if let rcswitch = menuItemDeviceMapper[sender.hash]{
-            if rcswitch.on {
-                switchOff(device: (rcswitch.device))
-            } else {
-                switchOn(device: rcswitch.device)
-            }
+        item.identifier = rcswitch.device
+        
+        return true
+    }
+   
+    
+    
+    
+    /*
+    func switchit(sender: NSMenuItem) {
+        if rcswitch.on {
+            switchOff(device: sender.)
+        } else {
+            switchOn(device: device)
         }
         
-    }
+    }*/
     
 
     
@@ -129,8 +153,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /* -------------------------------------------------------------------- */
     
     
-    func switchOn(device: String) {
-        NSLog("turning \(device) on")
+    func switchOn(sender: NSMenuItem) {
+        let device = sender.identifier
         let session = URLSession.shared
         // url-escape the query string we're passed
         let url = NSURL(string: "\(BASE_URL)/\(device)/on")
@@ -145,7 +169,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 switch httpResponse.statusCode {
                 case 200: // all good!
                     let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
-                    NSLog(dataString)
+                    NSLog("\(device) \(dataString)")
                 case 401: // unauthorized
                     NSLog("433 py api returned an 'unauthorized' response.")
                 case 550: // unauthorized
@@ -158,8 +182,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         task.resume()
     }
     
-    func switchOff(device: String) {
-        NSLog("turning \(device) off")
+    func switchOff(sender: NSMenuItem) {
+        let device = sender.identifier
         let session = URLSession.shared
         // url-escape the query string we're passed
         let url = NSURL(string: "\(BASE_URL)/\(device)/off")
@@ -174,7 +198,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 switch httpResponse.statusCode {
                 case 200: // all good!
                     let dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
-                    NSLog(dataString)
+                    NSLog("\(device) \(dataString)")
                 case 401: // unauthorized
                     NSLog("433 py api returned an 'unauthorized' response.")
                 case 550: // unauthorized
