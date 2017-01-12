@@ -25,6 +25,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
     var deviceList = [Device]()
     var menuItemDeviceMapper = [Int: Device]()
+    var errorMessage = "No connection"
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         let icon = NSImage(named: "rc-switch-app")
@@ -32,11 +33,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem.image = icon
         statusItem.menu = menu
         menu.delegate = self
-        
-        let menuItem = NSMenuItem()
-        menuItem.title = "No devices configured"
-        menuItem.isEnabled = false
-        menu.addItem(menuItem)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -54,10 +50,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             waiting = false
         }
         while(waiting){ wait() }
+        if deviceList.count == 0 {
+            return 1
+        }
         return deviceList.count
     }
     
     func menu(_ menu: NSMenu, update item: NSMenuItem, at index: Int, shouldCancel: Bool) -> Bool {
+        if (index == 0 && deviceList.count == 0) {
+            item.title = self.errorMessage
+            item.isEnabled = false
+            item.action = nil
+            return true
+        }
+        
         let rcswitch = deviceList[index]
         item.title = "Turn " + rcswitch.name + (rcswitch.on ? " off" : " on")
         item.target = self
@@ -66,14 +72,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         item.identifier = rcswitch.device
         
         return true
-    }
-    
-    func addHintItem(hint: String) {
-        let menuItem = NSMenuItem()
-        menuItem.title = hint
-        menuItem.isEnabled = false
-        menu.addItem(menuItem)
-
     }
 
     /* -------------------------------------------------------------------- */
@@ -163,6 +161,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let task = session.dataTask(with: request) { data, response, err in
 
             if let error = err as? NSError, error.domain == NSURLErrorDomain {
+                self.errorMessage = "No connection"
                 completionHandler(NSArray())    // return empty
             } else if let httpResponse = response as? HTTPURLResponse {
                 
@@ -192,9 +191,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                         deviceList.append(newDevice)
                         //NSLog("Got \(newDevice.name) (\(newDevice.device))")
                     }
+                    self.errorMessage = "No sockets configured"
                     completionHandler(deviceList as NSArray)
                     
                 default:
+                    self.errorMessage = "No connection"
                     completionHandler(NSArray())    // return empty
                     NSLog("433 py api response: %d %@", httpResponse.statusCode, HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))
                 }

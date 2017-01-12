@@ -18,6 +18,8 @@
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
-        <menu id="h9D-so-KVr"/>
+        <menu id="h9D-so-KVr">
+            <point key="canvasLocation" x="138" y="165.5"/>
+        </menu>
     </objects>
 </document>
