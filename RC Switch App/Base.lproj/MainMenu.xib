@@ -3,6 +3,8 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -14,6 +16,9 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="RC_Switch_App" customModuleProvider="target">
             <connections>
+                <outlet property="IpAddressTextfield" destination="vcD-Zt-ats" id="NqF-95-0Ol"/>
+                <outlet property="SecretTextfield" destination="LFZ-lw-N04" id="nZv-7i-HZc"/>
+                <outlet property="ipAddressWindow" destination="lAG-mo-EAo" id="ozv-S8-3MS"/>
                 <outlet property="menu" destination="h9D-so-KVr" id="1cr-Jd-Qb4"/>
             </connections>
         </customObject>
@@ -21,5 +26,101 @@
         <menu id="h9D-so-KVr">
             <point key="canvasLocation" x="138" y="165.5"/>
         </menu>
+        <window title="RC Switch App" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="lAG-mo-EAo" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <rect key="contentRect" x="139" y="81" width="435" height="123"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" misplaced="YES" id="aFJ-Re-hX4">
+                <rect key="frame" x="0.0" y="0.0" width="435" height="123"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9az-ze-KLa">
+                        <rect key="frame" x="20" y="20" width="711" height="89"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="l9A-we-Fgo">
+                                <rect key="frame" x="-2" y="72" width="715" height="17"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Add the ip address of your device running the API:" id="8eF-X2-aOR">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aWD-Bu-Zhg">
+                                <rect key="frame" x="0.0" y="34" width="711" height="22"/>
+                                <subviews>
+                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cqb-lj-0pi">
+                                        <rect key="frame" x="0.0" y="0.0" width="351.5" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="ip address, e.g. 192.168.1.101" drawsBackground="YES" id="vcD-Zt-ats">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hvn-2a-USH">
+                                        <rect key="frame" x="359.5" y="0.0" width="351.5" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="secret, default is &quot;test&quot;" drawsBackground="YES" id="LFZ-lw-N04">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Hvn-2a-USH" firstAttribute="leading" secondItem="cqb-lj-0pi" secondAttribute="trailing" constant="8" id="aEI-3d-nIZ"/>
+                                    <constraint firstItem="Hvn-2a-USH" firstAttribute="leading" secondItem="cqb-lj-0pi" secondAttribute="trailing" constant="8" id="dV5-4x-0XN"/>
+                                    <constraint firstItem="Hvn-2a-USH" firstAttribute="width" secondItem="cqb-lj-0pi" secondAttribute="width" id="hcN-Mb-TP1"/>
+                                    <constraint firstAttribute="trailing" secondItem="Hvn-2a-USH" secondAttribute="trailing" id="lmE-IL-WBM"/>
+                                    <constraint firstItem="cqb-lj-0pi" firstAttribute="leading" secondItem="aWD-Bu-Zhg" secondAttribute="leading" id="rsE-3q-Bgv"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sot-EK-xzR">
+                                <rect key="frame" x="0.0" y="-1" width="711" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Test and save" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zx7-jD-eEo">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <connections>
+                                        <action selector="saveIpAddressFromWindow:" target="Voe-Tx-rLC" id="BkU-kh-kJj"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="aWD-Bu-Zhg" firstAttribute="top" secondItem="l9A-we-Fgo" secondAttribute="bottom" constant="16" id="OsS-mw-XMn"/>
+                            <constraint firstItem="Sot-EK-xzR" firstAttribute="top" secondItem="aWD-Bu-Zhg" secondAttribute="bottom" constant="16" id="U8R-LF-q1C"/>
+                            <constraint firstAttribute="trailing" secondItem="l9A-we-Fgo" secondAttribute="trailing" id="WQm-RX-59a"/>
+                            <constraint firstAttribute="trailing" secondItem="aWD-Bu-Zhg" secondAttribute="trailing" id="YVc-AY-0RO"/>
+                            <constraint firstAttribute="trailing" secondItem="Sot-EK-xzR" secondAttribute="trailing" constant="20" symbolic="YES" id="YwM-Zo-N7o"/>
+                            <constraint firstItem="aWD-Bu-Zhg" firstAttribute="leading" secondItem="9az-ze-KLa" secondAttribute="leading" id="dZM-oT-f8T"/>
+                            <constraint firstAttribute="trailing" secondItem="Sot-EK-xzR" secondAttribute="trailing" id="jt4-fN-aaZ"/>
+                        </constraints>
+                        <visibilityPriorities>
+                            <integer value="1000"/>
+                            <integer value="1000"/>
+                            <integer value="1000"/>
+                        </visibilityPriorities>
+                        <customSpacing>
+                            <real value="3.4028234663852886e+38"/>
+                            <real value="3.4028234663852886e+38"/>
+                            <real value="3.4028234663852886e+38"/>
+                        </customSpacing>
+                    </stackView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="9az-ze-KLa" firstAttribute="top" secondItem="aFJ-Re-hX4" secondAttribute="top" constant="20" id="NlX-7x-Zr3"/>
+                    <constraint firstAttribute="bottom" secondItem="9az-ze-KLa" secondAttribute="bottom" constant="20" id="T8p-m5-LrR"/>
+                    <constraint firstItem="9az-ze-KLa" firstAttribute="leading" secondItem="aFJ-Re-hX4" secondAttribute="leading" constant="20" id="TJn-9M-cLc"/>
+                    <constraint firstAttribute="trailing" secondItem="9az-ze-KLa" secondAttribute="trailing" constant="20" id="ryU-Ym-vi1"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="101.5" y="44.5"/>
+        </window>
     </objects>
 </document>
