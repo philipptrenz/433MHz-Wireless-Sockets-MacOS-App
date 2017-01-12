@@ -12,42 +12,44 @@ import Foundation
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
+    let statusItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
+    
     @IBOutlet weak var menu: NSMenu!
     @IBOutlet weak var ipAddressWindow: NSWindow!
-    let statusItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
     @IBOutlet weak var IpAddressTextfield: NSTextFieldCell!
     @IBOutlet weak var SecretTextfield: NSTextFieldCell!
+    
+    let defaults = UserDefaults.standard
+    var deviceList = [Device]()
+    var errorMessage = "No connection"
+    let keyForBaseUrl = "base_url"
+    let keyForSecret = "secret"
     
     struct Device {
         var device: String
         var name: String
         var on: Bool
     }
-    
-    let defaults = UserDefaults.standard
-    
-    var deviceList = [Device]()
-    var menuItemDeviceMapper = [Int: Device]()
-    var errorMessage = "No connection"
-    let keyForBaseUrl = "base_url"
-    let keyForSecret = "secret"
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // initialize status bar icon and menu
         let icon = NSImage(named: "rc-switch-app")
         icon?.isTemplate = true // best for dark mode
         statusItem.image = icon
         statusItem.menu = menu
         menu.delegate = self
         
+        // is url to api and secret are not already set, show window for entering
         if defaults.string(forKey: keyForBaseUrl) == nil || defaults.string(forKey: keyForSecret) == nil {
             ipAddressWindow.makeKeyAndOrderFront(nil) // open window
         }
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
+        // Nothing to do
     }
     
+    // When save button got pressed validate and save inputs and close window
     @IBAction func saveIpAddressFromWindow(_ sender: NSButtonCell) {
         var address = IpAddressTextfield.stringValue
         let secret = SecretTextfield.stringValue != "" ? SecretTextfield.stringValue : "test"
@@ -71,7 +73,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     
     // Gets called when menu is about to open
-    // If returns an integer,
+    // If returns an integer
     func numberOfItems(in menu: NSMenu) -> Int {
         var waiting = true
         getList {
@@ -79,7 +81,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self.deviceList = devices as! [AppDelegate.Device]
             waiting = false
         }
-        while(waiting){ wait() }
+        while(waiting){ _ = wait() }
         if deviceList.count == 0 {
             return 1
         }
@@ -239,8 +241,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
     func testURL(urlString: String, secret: String, completionHandler: @escaping (_ canConnectToServer: Bool) -> ()) {
         var request: URLRequest!
-        if let testRequest = URLRequest(url: (NSURL(string: "\(urlString)/list") as! URL)) as? URLRequest {
-            request = testRequest
+        //if let testRequest = URLRequest(url: (NSURL(string: "\(urlString)/list") as! URL)) {
+        if let url =  NSURL(string: "\(urlString)/list") {
+            request = URLRequest(url: url as URL)
         } else {
             completionHandler(false)
         }
@@ -268,7 +271,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 switch httpResponse.statusCode {
                     
                 case 200: // all good!
-                    if let jsonData = try? JSONSerialization.jsonObject(with: data!, options:.mutableContainers) as? NSArray {
+                    if (try? JSONSerialization.jsonObject(with: data!, options:.mutableContainers) as? NSArray) != nil {
                         completionHandler(true)
                     }
                     completionHandler(false)

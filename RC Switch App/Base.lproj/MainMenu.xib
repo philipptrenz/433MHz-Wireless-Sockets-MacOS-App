@@ -39,7 +39,7 @@
                         <subviews>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="l9A-we-Fgo">
                                 <rect key="frame" x="-2" y="72" width="715" height="17"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Add the ip address of your device running the API:" id="8eF-X2-aOR">
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Enter the IP address of your device running the API and your secret:" id="8eF-X2-aOR">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
